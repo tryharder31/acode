@@ -1,7 +1,10 @@
+import numpy as np
+#git commit -m "a" && git add . && git push
 with open('test.dat') as f:
     with open('output.dat', 'w') as f2:
+        print(np.random.randint(1, 10000), file=f2)
         for line in f:
-            print(line,file=f2)
+            print(len(line),file=f2)
 
 quit()
 
