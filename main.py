@@ -1,57 +1,19 @@
 import numpy as np
+import tensorflow as tf
 #git commit -m "a" && git add . && git push
-with open('test.dat') as f:
-    with open('output.dat', 'w') as f2:
-        print(np.random.randint(1, 10000), file=f2)
-        for line in f:
-            print(len(line),file=f2)
+import tensorflow as tf
 
-quit()
+# Check if GPU is available
+if tf.test.gpu_device_name():
+    print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
+else:
+    print("Please install GPU version of TF")
 
-class ExIsTextEngine(TextEngine):
-        name = 'ex-is'
-        embedding_model = "jonfd/convbert-base-igc-is"
-        train_sets = ['train']
-        dev_sets = []
-        test_sets = []
+# Create two matrices
+matrix1 = tf.constant([[3., 3.]])
+matrix2 = tf.constant([[2.],[2.]])
 
-        labels = ['UNLABELLED']
+# Perform matrix multiplication
+product = tf.matmul(matrix1, matrix2)
 
-        input_dir = 'data/example_corpus'
-
-        def iter_files(self, dsets=None, sents_limit=None):
-            if dsets is None:
-                dsets = self.dsets
-            for dset in dsets:
-                for filename in listdir(join(self.input_dir, dset)):
-                    with open(join(self.input_dir, dset, filename)) as f:
-                        for line in f:
-                            sentence = line
-                            label = 'UNLABELLED'
-
-                            yield sentence, Config(label=label, time=None)
-
-
-class AlthingiUpptokurTextEngine(TextEngine):
-    name = 'alth-upp'
-    embedding_model = "jonfd/convbert-base-igc-is"
-    train_sets = ['train']
-    dev_sets = ['dev']
-    test_sets = ['eval']
-
-    labels = ['UNLABELLED']
-
-    input_dir = 'data/example_corpus'
-
-    def iter_files(self, dsets=None, sents_limit=None):
-        if dsets is None:
-            dsets = self.dsets
-        for dset in dsets:
-            for filename in listdir(join(self.input_dir, dset)):
-                with open(join(self.input_dir, dset, filename)) as f:
-                    for line in f:
-                        sentence = line
-                        label = 'UNLABELLED'
-
-                        yield sentence, Config(label=label, time=None)
-
+print(product)
