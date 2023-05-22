@@ -36,8 +36,9 @@ mse_test = mean_squared_error(y_test, y_test_pred)
 r2_train = r2_score(y_train, y_train_pred)
 r2_test = r2_score(y_test, y_test_pred)
 
-print("Training set: MSE = {}, R2 = {}".format(mse_train, r2_train))
-print("Test set: MSE = {}, R2 = {}".format(mse_test, r2_test))
+with open('output.txt', 'w') as f:
+    print("Training set: MSE = {}, R2 = {}".format(mse_train, r2_train),file=f)
+    print("Test set: MSE = {}, R2 = {}".format(mse_test, r2_test),file=f)
 
 
 quit()
