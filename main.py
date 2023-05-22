@@ -1,9 +1,11 @@
 #git commit -m "a" && git add . && git push
+print('hi')
+output_file = "output.txt"
+f = open(output_file, "w")
+print('hi',file=f)
 import numpy as np
 import tensorflow as tf
 
-output_file = "output.txt"
-f = open(output_file, "w")
 # Check if GPU is available
 if tf.test.gpu_device_name():
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()),file=f)
