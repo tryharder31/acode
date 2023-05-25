@@ -99,6 +99,13 @@ def eval_model(model, train_X, train_y, dev_X, dev_y,metrics=['f1_score','jaccar
             print(metric, round(eval(metric)(pred, dev_y),3))
         else:
             print(metric, round(eval(metric)(pred, dev_y, average='weighted'),3))
+def eval_with_sfs(model_func,train_X,train_y,dev_X,dev_y):
+
+    sfs_support = get_sfs_support(model_func,train_X,train_y)
+    model = model_func().fit(train_X[:,sfs_support],train_y)
+    print(f1_score(model.predict(dev_X), dev_y, average='weighted'))
+    print(f1_score(model.predict(dev_X[:,sfs_support]), dev_y, average='weighted'))
+    return sfs_support
 
 def grid_search(X, y,dev_X,dev_y):
     # Define the models
@@ -171,8 +178,8 @@ def get_sfs_support(estimator_func, X, y, n_features_to_select='auto'):
 
 
 path = 'data/samromur_queries_21.12_featureized_.1.csv'
-path = 'data/sample.csv'
 path='data/samromur_queries_21.12_featureized_processed.csv'
+path = 'data/sample.csv'
 print(path)
 
 km10 = 'KNeighborsClassifier(n_neighbors=10)'
@@ -244,18 +251,12 @@ def classification_model_breakdown(model_name):
     eval_model(model,scaled_pca3k_tr_X,train_y,scaled_pca3k_dv_X,dev_y)
     print()
 
-grid_search(scaled_var_tr_X, train_y,scaled_var_dev_X,dev_y)
-quit()
-def eval_with_sfs(model_func,train_X,train_y,dev_X,dev_y):
 
-    sfs_support = get_sfs_support(model_func,train_X,train_y)
-    model = model_func().fit(train_X[:,sfs_support],train_y)
-    print(f1_score(model.predict(dev_X), dev_y, average='weighted'))
-    print(f1_score(model.predict(dev_X[:,sfs_support]), dev_y, average='weighted'))
-    return sfs_support
+
+#grid_search(scaled_var_tr_X, train_y,scaled_var_dev_X,dev_y)
 model_func = lambda: RandomForestClassifier(n_jobs=-1)
-#support = (eval_with_sfs(model_func,scaled_var_tr_X,train_y,scaled_var_dev_X,dev_y))
-#print(support.sum())
+support = (eval_with_sfs(model_func,scaled_var_tr_X,train_y,scaled_var_dev_X,dev_y))
+print(support.sum())
 
 #classification_model_breakdown(km10)
 #classification_model_breakdown('mlp_classifiers')
