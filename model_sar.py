@@ -20,7 +20,7 @@ from sklearn.cluster import KMeans
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import classification_report
 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from scipy.spatial.distance import correlation
 from sklearn.decomposition import PCA,KernelPCA
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
@@ -100,6 +100,39 @@ def eval_model(model, train_X, train_y, dev_X, dev_y,metrics=['f1_score','jaccar
         else:
             print(metric, round(eval(metric)(pred, dev_y, average='weighted'),3))
 
+def grid_search(X, y):
+    # Define the models
+    models = [
+        ('RandomForest', RandomForestClassifier(), {
+            'n_estimators': [10, 50, 100],
+            'max_depth': [None, 10, 20, 30],
+            'min_samples_split': [2, 5, 10],
+            'n_jobs': [-1]
+        }),
+        ('GradientBoosting', GradientBoostingClassifier(), {
+            'n_estimators': [50, 100, 200],
+            'learning_rate': [0.01, 0.1, 1.0],
+            'max_depth': [3, 5, 10],
+        }),
+        ('SVM', SVC(), {
+            'C': [0.1, 1, 10],
+            'gamma': ['scale', 'auto'],
+            'kernel': ['linear', 'rbf'],
+        })
+    ]
+
+    for name, model, params in models:
+        gs = GridSearchCV(model, params, cv=5)
+        gs.fit(X, y)
+
+
+        y_pred = gs.predict(X)
+        report = classification_report(y, y_pred)
+
+        with open(f"output/{name}_classification_report.txt", "w") as f:
+            print(f"Best parameters for {name}: {gs.best_params_}",file=f)
+            print(file=f)
+            f.write(report)
 
 def find_optimal_clusters(data, max_k=5):
     iters = range(2, max_k + 1, 2)
@@ -209,10 +242,7 @@ def classification_model_breakdown(model_name):
     eval_model(model,scaled_pca3k_tr_X,train_y,scaled_pca3k_dv_X,dev_y)
     print()
 
-km10 = KNeighborsClassifier(n_neighbors=10)
-km10.fit(scaled_var_tr_X, train_y)
-with open('output.txt','w') as f:
-    f.write(str(km10.score(scaled_var_dev_X, dev_y)))
+grid_search(scaled_var_tr_X, train_y)
 quit()
 def eval_with_sfs(model_func,train_X,train_y,dev_X,dev_y):
 
