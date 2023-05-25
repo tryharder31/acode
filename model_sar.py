@@ -11,7 +11,7 @@ alpha: 0.0001
 """
 
 
-
+import os
 import pickle
 import pandas as pd
 import numpy as np
@@ -69,8 +69,8 @@ def train_dev_test_split(df):
     #print(len(string_to_int))
 
     # save string_to_int to a file:
-    with open('output/string_to_int.pkl','wb') as f:
-        pickle.dump(string_to_int,f)
+    #with open('output/string_to_int.pkl','wb') as f:
+    #    pickle.dump(string_to_int,f)
 
     def prepare(df):
         y = df['age'].to_numpy()
@@ -107,42 +107,6 @@ def eval_with_sfs(model_func,train_X,train_y,dev_X,dev_y):
     print(f1_score(model.predict(dev_X[:,sfs_support]), dev_y, average='weighted'))
     return sfs_support
 
-def grid_search(X, y,dev_X,dev_y):
-    # Define the models
-    models = [
-        ('RandomForest', RandomForestClassifier(), {
-            'n_estimators': [100,300, 400],
-            'max_depth': [None, 10, 20, 30],
-            'min_samples_split': [2, 5, 10],
-            'n_jobs': [-1]
-        }),
-        ('GradientBoosting', GradientBoostingClassifier(), {
-            'n_estimators': [50, 100, 200],
-            'learning_rate': [0.01, 0.1, 1.0],
-            'max_depth': [5, 10, 15],
-        }),
-        ('SVM', SVC(), {
-            'C': [0.1, 1, 5, 10],
-            'gamma': ['scale', 'auto'],
-            'kernel': ['linear', 'rbf'],
-        })
-    ]
-
-    for name, model, params in models:
-        print('Training model: {}'.format(name))
-        gs = GridSearchCV(model, params, cv=2,scoring='f1_weighted')
-        gs.fit(X, y)
-
-        y_pred = gs.predict(dev_X)
-        report = classification_report(dev_y, y_pred)
-
-        with open(f"output/{name}_report.txt", "w") as f:
-            cv_res=gs.cv_results_
-            for mean_score, params in sorted(zip(cv_res["mean_test_score"], cv_res["params"]),key=lambda sp:sp[0]):
-                print(params, "Mean validation score:", round(mean_score,3),file=f)
-            print(file=f)
-            f.write(report)
-
 def find_optimal_clusters(data, max_k=5):
     iters = range(2, max_k + 1, 2)
 
@@ -178,14 +142,56 @@ def get_sfs_support(estimator_func, X, y, n_features_to_select='auto'):
 
 
 path = 'data/samromur_queries_21.12_featureized_.1.csv'
-path = 'data/sample.csv'
 path='data/samromur_queries_21.12_featureized_processed.csv'
+path = 'data/sample.csv'
+out_dir = 'output/'+path.split('/')[1]
 print(path)
+print(out_dir)
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 
 km10 = 'KNeighborsClassifier(n_neighbors=10)'
 mlparameters = {'hidden_layer_sizes': ((100,),(100,100),(500),(500,500)),
                 'alpha' : (0.0001,0.01,0.1,.5)}
 mlp_classifiers = 'GridSearchCV(MLPClassifier(),mlparameters,verbose=1)'
+
+
+def grid_search(X, y,dev_X,dev_y):
+    # Define the models
+    models = [
+        ('RandomForest', RandomForestClassifier(), {
+            'n_estimators': [100,300, 400],
+            'max_depth': [None, 10, 20, 30],
+            'min_samples_split': [2, 5, 10],
+            'n_jobs': [-1]
+        }),
+        ('GradientBoosting', GradientBoostingClassifier(), {
+            'n_estimators': [50, 100, 200],
+            'learning_rate': [0.01, 0.1, 1.0],
+            'max_depth': [5, 10, 15],
+        }),
+        ('SVM', SVC(), {
+            'C': [0.1, 1, 5, 10],
+            'gamma': ['scale', 'auto'],
+            'kernel': ['linear', 'rbf'],
+        })
+    ]
+
+    for name, model, params in models:
+        print('Training model: {}'.format(name))
+        gs = GridSearchCV(model, params, cv=5,scoring='f1_weighted')
+        gs.fit(X, y)
+
+        y_pred = gs.predict(dev_X)
+        report = classification_report(dev_y, y_pred)
+
+        with open(out_dir+f"/{name}_report.txt", "w") as f:
+            cv_res=gs.cv_results_
+            for mean_score, params in sorted(zip(cv_res["mean_test_score"], cv_res["params"]),key=lambda sp:sp[0]):
+                print(params, "Mean validation score:", round(mean_score,3),file=f)
+            print(file=f)
+            f.write(report)
+
 
 
 var_selector = VarianceThreshold(threshold=.3)
