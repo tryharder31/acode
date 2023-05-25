@@ -178,8 +178,8 @@ def get_sfs_support(estimator_func, X, y, n_features_to_select='auto'):
 
 
 path = 'data/samromur_queries_21.12_featureized_.1.csv'
-path='data/samromur_queries_21.12_featureized_processed.csv'
 path = 'data/sample.csv'
+path='data/samromur_queries_21.12_featureized_processed.csv'
 print(path)
 
 km10 = 'KNeighborsClassifier(n_neighbors=10)'
@@ -253,11 +253,11 @@ def classification_model_breakdown(model_name):
 
 
 
-#grid_search(scaled_var_tr_X, train_y,scaled_var_dev_X,dev_y)
-model_func = lambda: RandomForestClassifier(n_jobs=-1)
-support = (eval_with_sfs(model_func,scaled_var_tr_X,train_y,scaled_var_dev_X,dev_y))
-with open('output/support.txt','w') as f:
-    print(support.sum(),file=f)
+grid_search(scaled_var_tr_X, train_y,scaled_var_dev_X,dev_y)
+#model_func = lambda: RandomForestClassifier(n_jobs=-1)
+#support = (eval_with_sfs(model_func,scaled_var_tr_X,train_y,scaled_var_dev_X,dev_y))
+#with open('output/support.txt','w') as f:
+#    print(support.sum(),file=f)
 
 #classification_model_breakdown(km10)
 #classification_model_breakdown('mlp_classifiers')
