@@ -100,11 +100,11 @@ def eval_model(model, train_X, train_y, dev_X, dev_y,metrics=['f1_score','jaccar
         else:
             print(metric, round(eval(metric)(pred, dev_y, average='weighted'),3))
 
-def grid_search(X, y):
+def grid_search(X, y,dev_X,dev_y):
     # Define the models
     models = [
         ('RandomForest', RandomForestClassifier(), {
-            'n_estimators': [10, 50, 100],
+            'n_estimators': [100,300, 400],
             'max_depth': [None, 10, 20, 30],
             'min_samples_split': [2, 5, 10],
             'n_jobs': [-1]
@@ -112,25 +112,27 @@ def grid_search(X, y):
         ('GradientBoosting', GradientBoostingClassifier(), {
             'n_estimators': [50, 100, 200],
             'learning_rate': [0.01, 0.1, 1.0],
-            'max_depth': [3, 5, 10],
+            'max_depth': [5, 10, 15],
         }),
         ('SVM', SVC(), {
-            'C': [0.1, 1, 10],
+            'C': [0.1, 1, 5, 10],
             'gamma': ['scale', 'auto'],
             'kernel': ['linear', 'rbf'],
         })
     ]
 
     for name, model, params in models:
-        gs = GridSearchCV(model, params, cv=5)
+        print('Training model: {}'.format(name))
+        gs = GridSearchCV(model, params, cv=2,scoring='f1_weighted')
         gs.fit(X, y)
 
+        y_pred = gs.predict(dev_X)
+        report = classification_report(dev_y, y_pred)
 
-        y_pred = gs.predict(X)
-        report = classification_report(y, y_pred)
-
-        with open(f"output/{name}_classification_report.txt", "w") as f:
-            print(f"Best parameters for {name}: {gs.best_params_}",file=f)
+        with open(f"output/{name}_report.txt", "w") as f:
+            cv_res=gs.cv_results_
+            for mean_score, params in sorted(zip(cv_res["mean_test_score"], cv_res["params"]),key=lambda sp:sp[0]):
+                print(params, "Mean validation score:", round(mean_score,3),file=f)
             print(file=f)
             f.write(report)
 
@@ -242,7 +244,7 @@ def classification_model_breakdown(model_name):
     eval_model(model,scaled_pca3k_tr_X,train_y,scaled_pca3k_dv_X,dev_y)
     print()
 
-grid_search(scaled_var_tr_X, train_y)
+grid_search(scaled_var_tr_X, train_y,scaled_var_dev_X,dev_y)
 quit()
 def eval_with_sfs(model_func,train_X,train_y,dev_X,dev_y):
 
@@ -251,7 +253,7 @@ def eval_with_sfs(model_func,train_X,train_y,dev_X,dev_y):
     print(f1_score(model.predict(dev_X), dev_y, average='weighted'))
     print(f1_score(model.predict(dev_X[:,sfs_support]), dev_y, average='weighted'))
     return sfs_support
-
+model_func = lambda: RandomForestClassifier(n_jobs=-1)
 #support = (eval_with_sfs(model_func,scaled_var_tr_X,train_y,scaled_var_dev_X,dev_y))
 #print(support.sum())
 
