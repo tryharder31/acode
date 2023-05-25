@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=korat@hi.is # for example uname@hi.is
 #SBATCH --partition=gpu-2xA100 # request node from a specific partition
 #SBATCH --nodes=1 # number of nodes
 #SBATCH --output=slurm_job_output.log
@@ -30,7 +29,7 @@ if [ ! -d $tdir ]; then
 fi
 
 # Copy the necessary input files to run your job
-cp $SLURM_SUBMIT_DIR/* $tdir/
+cp -R $SLURM_SUBMIT_DIR/* $tdir/
 
 # If the program needs many input files you can add a separate line for each file.
 
@@ -38,10 +37,10 @@ cp $SLURM_SUBMIT_DIR/* $tdir/
 # cp -r $SLURM_SUBMIT_DIR/myinputdir $tdir/
 
 # Now the run the job from the temporary directory e.g.
-python main.py
+python model_sar.py
 
 # After the job is completed make sure to copy the output to your submit directory.
-cp $tdir/* $SLURM_SUBMIT_DIR/
+cp -R $tdir/* $SLURM_SUBMIT_DIR/
 
 # If the program produces many output files you can add a separate line for each file.
 # Please try to only copy the files that you need.
