@@ -142,8 +142,8 @@ def get_sfs_support(estimator_func, X, y, n_features_to_select='auto'):
 
 
 path = 'data/samromur_queries_21.12_featureized_.1.csv'
-path='data/samromur_queries_21.12_featureized_processed.csv'
 path = 'data/sample.csv'
+path='data/samromur_queries_21.12_featureized_processed.csv'
 out_dir = 'output/'+path.split('/')[1]
 print(path)
 print(out_dir)
