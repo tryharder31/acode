@@ -1,13 +1,10 @@
 #!/bin/bash
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=korat@hi.is # for example uname@hi.is
-#SBATCH --partition=gpu-2xA100  # request node from a specific partition
-#SBATCH --nodes=2                 # number of nodes
-#SBATCH --ntasks-per-node=48      # 48 cores per node (96 in total)
-#SBATCH --mem-per-cpu=3900        # MB RAM per cpu core
-#SBATCH --hint=nomultithread      # Suppress multithread
+#SBATCH --partition=gpu-2xA100 # request node from a specific partition
+#SBATCH --nodes=1 # number of nodes
 #SBATCH --output=slurm_job_output.log
-#SBATCH --error=slurm_job_errors.log   # Logs if job crashes
+#SBATCH --error=slurm_job_errors.log # Logs if job crashes
 
 . ~/.program_env_bash
 
