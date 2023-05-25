@@ -20,6 +20,7 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 # Create a MLPRegressor model
+
 model = MLPRegressor(hidden_layer_sizes=(64,64,64), activation='relu', solver='adam', max_iter=500, random_state=42)
 
 # Train the model
