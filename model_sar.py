@@ -256,7 +256,8 @@ def classification_model_breakdown(model_name):
 #grid_search(scaled_var_tr_X, train_y,scaled_var_dev_X,dev_y)
 model_func = lambda: RandomForestClassifier(n_jobs=-1)
 support = (eval_with_sfs(model_func,scaled_var_tr_X,train_y,scaled_var_dev_X,dev_y))
-print(support.sum())
+with open('output/support.txt','w') as f:
+    print(support.sum(),file=f)
 
 #classification_model_breakdown(km10)
 #classification_model_breakdown('mlp_classifiers')
