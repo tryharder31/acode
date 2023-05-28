@@ -37,7 +37,7 @@ cp -R $SLURM_SUBMIT_DIR/* $tdir/
 # cp -r $SLURM_SUBMIT_DIR/myinputdir $tdir/
 
 # Now the run the job from the temporary directory e.g.
-python model_sar.py
+python model_sar_small.py
 
 # After the job is completed make sure to copy the output to your submit directory.
 cp -R $tdir/* $SLURM_SUBMIT_DIR/

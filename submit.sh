@@ -2,6 +2,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --partition=gpu-2xA100 # request node from a specific partition
 #SBATCH --nodes=1 # number of nodes
+#SBATCH --ntasks-per-node=64
 #SBATCH --output=slurm_job_output.log
 #SBATCH --error=slurm_job_errors.log # Logs if job crashes
 
