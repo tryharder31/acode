@@ -1,21 +1,19 @@
-from PIL import Image
+from sklearn.datasets import make_classification, load_iris
+from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
-# Load the image
-image = Image.open('path_to_your_image.jpg')
+# now load the iris dataset  inty X,y
+iris = load_iris()
+X = iris.data
+y = iris.target
 
-# Convert the image to a NumPy array
-image_array = np.array(image)
-from keras.preprocessing.image import img_to_array, load_img
+clf = RandomForestClassifier()
+clf.fit(X, y)
 
-# Resize the image to the size your CNN expects (e.g., 32x32)
-image = load_img('path_to_your_image.jpg', target_size=(32, 32))
+def get_top_k_features(clf, K=500):
+    importances = clf.feature_importances_
+    indices = np.argsort(importances)[::-1]
 
-# Convert the image to a NumPy array
-image_array = img_to_array(image)
+    return indices[:K]
 
-# Scale the image pixels to be between 0 and 1
-image_array /= 255.0
-images_list = [image_array1, image_array2, image_array3, ...]  # List of your image arrays
-images_batch = np.array(images_list)  # Convert list of arrays to a 4D batch array
-predictions = cnn_model.predict(images_batch)
+print(top_K_features_indices)
