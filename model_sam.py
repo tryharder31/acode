@@ -243,7 +243,7 @@ def do(model_func,X,y, out_dir,n_splits=5,):
 path = 'data/samromur_queries_21.12_featureized_.1.csv'
 path = 'data/sample.csv'
 path='data/samromur_queries_21.12_featureized_processed.csv'
-K=50
+K=50 # number of top pefrorming features to be selected
 
 # now load into "path" the value of the -p runtime keyword:
 parser = argparse.ArgumentParser()
