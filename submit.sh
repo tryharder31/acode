@@ -1,10 +1,8 @@
 #!/bin/bash
 #SBATCH --mail-type=ALL
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=1
-#SBATCH --gres=gpu:1
-#SBATCH --time=24:00:00
-#SBATCH --partition==gpu-2xA100  # request node from a specific partition
+#SBATCH --partition=48cpu_192mem  # request node from a specific partition
+#SBATCH --nodes=2                 # number of nodes
+#SBATCH --ntasks-per-node=48      # 48 cores per node (96 in total)
 #SBATCH --output=slurm_job_output.log
 #SBATCH --error=slurm_job_errors.log   # Logs if job crashes
 
